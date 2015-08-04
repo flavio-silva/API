@@ -55,4 +55,30 @@ class ProductDAO implements DAOInterface
         }
         $this->update($product);
     }
+
+    public function findAll()
+    {
+        $query = 'SELECT name, description, value FROM product';
+        $stmt = $this->pdo->query($query);
+        
+        
+        $products = [];
+        
+        while($product = $stmt->fetchObject('API\Entity\Product'))
+        {
+        	$products[$product->getId()] = $product;
+        }
+        
+        return $products;
+        
+    }
+
+    public function findById($id)
+    {
+        $query = 'SELECT name, description, value FROM product WHERE id = :id';
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchObject('API\Entity\Product');
+    }
 }
