@@ -1,3 +1,6 @@
 composer.phar
 vendor/
 /nbproject/
+.buildpath
+.project
+.settings/
