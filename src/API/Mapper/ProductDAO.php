@@ -2,9 +2,9 @@
 
 namespace API\Mapper;
 
-use API\Entity\Product as ProductEntity;
+use API\Entity\ProductInterface;
 
-class ProductDAO implements DAOInterface
+class ProductDAO implements ProductDAOInterface
 {
     protected $pdo;
     
@@ -13,7 +13,7 @@ class ProductDAO implements DAOInterface
         $this->pdo = $pdo;
     }
     
-    protected function insert(ProductEntity $product)
+    protected function insert(ProductInterface $product)
     {
         $query = "INSERT INTO product (name, description, value) "
                 . "values (:name, :description, :value)";
@@ -30,15 +30,15 @@ class ProductDAO implements DAOInterface
     
     }
     
-    protected function update(ProductEntity $product)
+    protected function update(ProductInterface $product)
     {
         $query = "UPDATE product SET name = :name, description = :description, value =:value "
                 . "WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindValue(':name', $product->getName(), \PDO::PARAM_STR);
-        $stmt->bindValue(':descripton', $product->getDescription(), \PDO::PARAM_STR);
+        $stmt->bindValue(':description', $product->getDescription(), \PDO::PARAM_STR);
         $stmt->bindValue(':value', $product->getValue());
-        $stmt->bindValue(':id', $product->getId());
+        $stmt->bindValue(':id', $product->getId(),\PDO::PARAM_INT);
         
         if($stmt->execute()) {
             return $product;
@@ -48,17 +48,17 @@ class ProductDAO implements DAOInterface
     
     }
     
-    public function save(ProductEntity $product)
+    public function save(ProductInterface $product)
     {
         if(is_null($product->getId())) {
-            $this->insert($product);
+            return $this->insert($product);
         }
-        $this->update($product);
+        return $this->update($product);
     }
 
     public function findAll()
     {
-        $query = 'SELECT name, description, value FROM product';
+        $query = 'SELECT * FROM product';
         $stmt = $this->pdo->query($query);
         
         
@@ -66,16 +66,17 @@ class ProductDAO implements DAOInterface
         
         while($product = $stmt->fetchObject('API\Entity\Product'))
         {
+            
         	$products[$product->getId()] = $product;
         }
-        
+       
         return $products;
         
     }
 
     public function findById($id)
     {
-        $query = 'SELECT name, description, value FROM product WHERE id = :id';
+        $query = 'SELECT * FROM product WHERE id = :id';
         $stmt = $this->pdo->prepare($query);
         $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
         $stmt->execute();

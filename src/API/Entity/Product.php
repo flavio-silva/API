@@ -2,7 +2,7 @@
 
 namespace API\Entity;
 
-class Product implements EntityInterface
+class Product implements ProductInterface
 {
     private $id;
     private $name;
