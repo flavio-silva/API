@@ -1,6 +1,8 @@
 {
     "require": {
-        "silex/silex": "*"
+        "silex/silex": "*",
+        "twig/twig": "*",
+        "symfony/twig-bridge": "*"
     },
     "autoload": {
         "psr-4" : {

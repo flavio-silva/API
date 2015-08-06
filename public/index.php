@@ -26,7 +26,13 @@ $app['product.service'] = function (\Silex\Application $app) {
 
 
 $app->get('/clientes', function(\Silex\Application $app) use($clientes) {
-	return $app->json($clientes);
+    return $app->json($clientes);
+});
+
+$app->get('/products', function (\Silex\Application $app) {
+    return $app['twig']->render('products.twig', [
+        'products' => $app['product.service']->findAll()
+    ]);
 });
 
 $app->run();

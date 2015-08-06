@@ -12,7 +12,7 @@ class ProductService
     protected $dao;
     protected $product;
     
-    public function __construct(ProductEntity $product, ProductDao $dao)
+    public function __construct(ProductEntity $product, ProductDAO $dao)
     {
         $this->dao = $dao;
         $this->product = $product;
@@ -21,6 +21,11 @@ class ProductService
     public function save(array $data)
     {
         Hydrator::configure($this->product, $data);
-        $this->dao->save($this->product);
+        return $this->dao->save($this->product);
+    }
+    
+    public function findAll()
+    {
+        return $this->dao->findAll();
     }
 }

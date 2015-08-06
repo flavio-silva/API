@@ -1,0 +1,22 @@
+{% extends "layout.twig" %}
+{% block content %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        
+    {% for product in products %}
+        <tr>
+            <th scope="row">{{product.getId()}}</th>
+            <td>{{product.getName()}}</td>
+            <td>{{product.getDescription()}}</td>
+            <td>{{product.getValue()}}</td>
+        </tr>
+    {% endfor%}
+    </table>
+{%endblock%}
