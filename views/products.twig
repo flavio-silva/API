@@ -7,6 +7,7 @@
                 <th>Nome</th>
                 <th>Descrição</th>
                 <th>Value</th>
+                <th>Ação</th>
             </tr>
         </thead>
         
@@ -16,6 +17,14 @@
             <td>{{product.getName()}}</td>
             <td>{{product.getDescription()}}</td>
             <td>{{product.getValue()}}</td>
+            <td>
+                <a data-toggle="tooltip" data-placement="top" title="" class="btn btn-default btn-sm" href="{{path('edit', {id: product.getId()})}}" data-original-title="Editar">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                </a>
+                <a data-toggle="tooltip" data-placement="top" title="" class="btn btn-default btn-sm" href="{{path('delete', {id: product.getId()})}}" data-original-title="Editar">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </a>
+            </td>
         </tr>
     {% endfor%}
     </table>

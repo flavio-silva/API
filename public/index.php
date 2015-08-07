@@ -34,5 +34,16 @@ $app->get('/products', function (\Silex\Application $app) {
         'products' => $app['product.service']->findAll()
     ]);
 });
+$app->get('product/edit/{id}', function (\Silex\Application $app, $id) {
+  return $app['twig']->render('edit.twig', [
+    'product' => $app['product.service']->findBy($id)
+  ]);
+})->bind('edit');
+
+$app->get('product/delete/{id}', function (\Silex\Application $app, $id) {
+    
+    $app['product.service']->delete($id);
+    return $app->redirect('/products');
+})->bind('delete');
 
 $app->run();

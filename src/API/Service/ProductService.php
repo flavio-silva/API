@@ -6,7 +6,7 @@ use API\Mapper\ProductDAO;
 use API\Entity\Product as ProductEntity;
 use API\Hydrator;
 
-class ProductService
+class ProductService implements CrudServiceInterface
 {
     
     protected $dao;
@@ -28,4 +28,15 @@ class ProductService
     {
         return $this->dao->findAll();
     }
+    
+    public function delete($id) 
+    {
+        return $this->dao->delete($id);
+    }
+
+    public function findBy($id) 
+    {
+        return $this->dao->findById($id);
+    }
+
 }

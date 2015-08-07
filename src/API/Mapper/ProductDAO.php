@@ -82,4 +82,12 @@ class ProductDAO implements ProductDAOInterface
         $stmt->execute();
         return $stmt->fetchObject('API\Entity\Product');
     }
+    
+    public function delete($id) 
+    {
+        $query = 'DELETE FROM product WHERE id = :id';
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+        $stmt->execute();
+    }
 }
