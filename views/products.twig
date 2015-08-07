@@ -19,7 +19,7 @@
             <th scope="row">{{product.getId()}}</th>
             <td>{{product.getName()}}</td>
             <td>{{product.getDescription()}}</td>
-            <td>{{product.getValue()}}</td>
+            <td>{{product.getValue()| number_format(2, ',', '.')}}</td>
             <td>
                 <a data-toggle="tooltip" data-placement="top" title="" class="btn btn-default btn-sm" href="{{path('edit', {id: product.getId()})}}" data-original-title="Editar">
                     <span style="color: blue" class="glyphicon glyphicon-edit" aria-hidden="true"></span>

@@ -58,8 +58,9 @@ class Product implements ProductInterface
     }
 
     public function setValue($value)
-    {
-        $this->value = $value;
+    {   
+        $numberFormatter = new \NumberFormatter('pt_BR', \NumberFormatter::DECIMAL);
+        $this->value = $numberFormatter->parse($value);
         return $this;
     }
 }

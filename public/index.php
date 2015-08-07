@@ -43,6 +43,10 @@ $client->get('/clientes', function(\Silex\Application $app) use($clientes) {
     return $app->json($clientes);
 });
 
+$app->get('/', function (Application $app){
+   return $app['twig']->render('index.twig');
+})->bind('home');
+
 $product = $app['controllers_factory'];
 
 $product->get('/', function (\Silex\Application $app) {
@@ -60,7 +64,10 @@ $product->get('new', function (Application $app){
 $product->get('edit/{id}', function (Application $app, $id) {
     $product = $app['product.service']->findBy($id);
     $form = $app['product.form'];
-    $form->setData($product->toArray());
+    $data = $product->toArray();
+    $numberFormatter = new \NumberFormatter('pt_BR', \NumberFormatter::DECIMAL);    
+    $data['value'] = $numberFormatter->format($data['value']);
+    $form->setData($data);
     
     return $app['twig']->render('edit.twig', [
         'form' => $form->createView()
