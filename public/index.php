@@ -2,6 +2,9 @@
 
 require __DIR__ . '/../bootstrap.php';
 
+use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
+
 $clientes = [
 	['nome' => 'Flavio', 'email' => 'flv.alves@gmail.com', 'cpf' => '999.999.999-99'],
 	['nome' => 'Mayara', 'email' => 'mayarachagas2010@gmail.com', 'cpf' => '888.888.888-88'],
@@ -24,6 +27,16 @@ $app['product.service'] = function (\Silex\Application $app) {
     return new \API\Service\ProductService($app['product.entity'], $app['product.dao']);    
 };
 
+$app['product.form'] = function (\Silex\Application $app) {
+  return $app['form.factory']
+        ->createBuilder()
+        ->add('id', 'hidden')
+        ->add('name', 'text', ['required' => true])
+        ->add('description', 'text', ['required' => true])
+        ->add('value', 'text', ['required' => true])
+        ->getForm();
+};
+
 $client = $app['controllers_factory'];
 
 $client->get('/clientes', function(\Silex\Application $app) use($clientes) {
@@ -38,11 +51,20 @@ $product->get('/', function (\Silex\Application $app) {
     ]);
 })->bind('list');
 
-$product->get('edit/{id}', function (\Silex\Application $app, $id) {
-  return $app['twig']->render('edit.twig', [
-    'product' => $app['product.service']->findBy($id)
-  ]);
+$product->get('edit/{id}', function (Application $app, $id) {
+    $product = $app['product.service']->findBy($id);
+    $form = $app['product.form'];
+    $form->setData($product->toArray());
+    
+    return $app['twig']->render('edit.twig', [
+        'form' => $form->createView()
+    ]);
 })->bind('edit');
+
+$product->post('edit', function (Application $app, Request $request) {
+    $app['product.service']->save($request->get('form'));
+    return $app->redirect('/product');
+})->bind('save');
 
 $product->get('delete/{id}', function (\Silex\Application $app, $id) {
     

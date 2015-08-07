@@ -2,7 +2,10 @@
     "require": {
         "silex/silex": "*",
         "twig/twig": "*",
-        "symfony/twig-bridge": "*"
+        "symfony/twig-bridge": "^2.7",
+        "symfony/form": "^2.7",
+        "symfony/security-csrf": "^2.7",
+        "symfony/translation": "^2.7"
     },
     "autoload": {
         "psr-4" : {

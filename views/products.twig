@@ -19,10 +19,10 @@
             <td>{{product.getValue()}}</td>
             <td>
                 <a data-toggle="tooltip" data-placement="top" title="" class="btn btn-default btn-sm" href="{{path('edit', {id: product.getId()})}}" data-original-title="Editar">
-                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    <span style="color: blue" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                 </a>
                 <a data-toggle="tooltip" data-placement="top" title="" class="btn btn-default btn-sm" href="{{path('delete', {id: product.getId()})}}" data-original-title="Editar">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    <span style="color: red" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </a>
             </td>
         </tr>
