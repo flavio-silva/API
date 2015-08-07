@@ -24,26 +24,33 @@ $app['product.service'] = function (\Silex\Application $app) {
     return new \API\Service\ProductService($app['product.entity'], $app['product.dao']);    
 };
 
+$client = $app['controllers_factory'];
 
-$app->get('/clientes', function(\Silex\Application $app) use($clientes) {
+$client->get('/clientes', function(\Silex\Application $app) use($clientes) {
     return $app->json($clientes);
 });
 
-$app->get('/products', function (\Silex\Application $app) {
+$product = $app['controllers_factory'];
+
+$product->get('/', function (\Silex\Application $app) {
     return $app['twig']->render('products.twig', [
         'products' => $app['product.service']->findAll()
     ]);
-});
-$app->get('product/edit/{id}', function (\Silex\Application $app, $id) {
+})->bind('list');
+
+$product->get('edit/{id}', function (\Silex\Application $app, $id) {
   return $app['twig']->render('edit.twig', [
     'product' => $app['product.service']->findBy($id)
   ]);
 })->bind('edit');
 
-$app->get('product/delete/{id}', function (\Silex\Application $app, $id) {
+$product->get('delete/{id}', function (\Silex\Application $app, $id) {
     
     $app['product.service']->delete($id);
-    return $app->redirect('/products');
+    return $app->redirect('/product');
 })->bind('delete');
-
+        
+/*@var $app \Silex\Application*/
+$app->mount('/product', $product);
+$app->mount('/client', $client);
 $app->run();
