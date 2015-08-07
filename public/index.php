@@ -51,6 +51,12 @@ $product->get('/', function (\Silex\Application $app) {
     ]);
 })->bind('list');
 
+$product->get('new', function (Application $app){
+    return $app['twig']->render('create.twig', [
+        'form' => $app['product.form']->createView()
+    ]);
+})->bind('new');
+
 $product->get('edit/{id}', function (Application $app, $id) {
     $product = $app['product.service']->findBy($id);
     $form = $app['product.form'];
