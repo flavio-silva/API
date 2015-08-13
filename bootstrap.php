@@ -12,4 +12,6 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), [
     'translator.messages' => []
 ]);
 
+$app->register(new Silex\Provider\ValidatorServiceProvider());
+
 $app['debug'] = true;

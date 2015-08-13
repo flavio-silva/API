@@ -4,6 +4,7 @@ require __DIR__ . '/../bootstrap.php';
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Constraints as Assert;
 
 $clientes = [
 	['nome' => 'Flavio', 'email' => 'flv.alves@gmail.com', 'cpf' => '999.999.999-99'],
@@ -87,6 +88,24 @@ $product->get('delete/{id}', function (\Silex\Application $app, $id) {
 
 $products = $app['controllers_factory'];
 
+$app->post('/products/', function (Application $app, Request $request){
+	$data['name'] = $request->get('name');
+	$data['description'] = $request->get('description');
+	$data['value'] = $request->get('value');
+        
+        $constraint = new Assert\Collection([
+            'name' => [new Assert\NotBlank(), new Assert\Length(['max' => 100])],
+            'description' => [new Assert\NotBlank(), new Assert\Length(['max' => 255])],
+            'value' => [new Assert\Regex('/^[1-9]{1}[0-9]+,[0-9]{2}$/')]
+        ]);
+        
+        $errors = $app['validator']->validateValue($data, $constraint);
+        
+        $product = $app['product.service']->save($data);
+	 
+	return $app->json($product->toArray());
+});
+
 $products->get('/', function (Application $app) {
     foreach($app['product.service']->findAll() as $product) {
         $data[$product->getId()] = $product->toArray();
@@ -97,17 +116,16 @@ $products->get('/', function (Application $app) {
 
 $products->get('/{id}', function (Application $app, $id){
     $product = $app['product.service']->findBy($id);
-    return $app->json($product->toArray());
-});
+    
+    if($product) {
+        return $app->json($product->toArray());
+    }
+    
+    return $app->json([
+       'error' => "Cannot find by id {$id}"
+    ]);
+})->assert('id', '\d+');
 
-$products->post('/', function (Application $app, Request $request){
-   $data['name'] = $request->get('name');
-   $data['description'] = $request->get('description');
-   $data['value'] = $request->get('value');
-   $product = $app['product.service']->save($data);
-   
-   return $app->json($product->toArray());
-});
 
 /*@var $app \Silex\Application*/
 $app->mount('/product', $product);
