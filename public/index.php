@@ -88,7 +88,7 @@ $product->get('delete/{id}', function (\Silex\Application $app, $id) {
 
 $products = $app['controllers_factory'];
 
-$app->post('/products/', function (Application $app, Request $request){
+$app->post('/products', function (Application $app, Request $request){
 	$data['name'] = $request->get('name');
 	$data['description'] = $request->get('description');
 	$data['value'] = $request->get('value');
@@ -96,14 +96,25 @@ $app->post('/products/', function (Application $app, Request $request){
         $constraint = new Assert\Collection([
             'name' => [new Assert\NotBlank(), new Assert\Length(['max' => 100])],
             'description' => [new Assert\NotBlank(), new Assert\Length(['max' => 255])],
-            'value' => [new Assert\Regex('/^[1-9]{1}[0-9]+,[0-9]{2}$/')]
+            'value' => [new Assert\NotBlank(), new Assert\Regex('/^[1-9]{1}[0-9]*,[0-9]{2}$/')]
         ]);
         
         $errors = $app['validator']->validateValue($data, $constraint);
         
+        if($errors->count() > 0) {
+            $messages = [];
+            
+            /*@var $error Symfony\Component\Validator\ConstraintViolationInterface */
+            foreach($errors as $error) {
+                $messages[$error->getPropertyPath()] =$error->getMessage();
+            }
+            
+            return $app->json($messages);
+        }
+        
         $product = $app['product.service']->save($data);
-	 
-	return $app->json($product->toArray());
+        return $app->json($product->toArray());
+	
 });
 
 $products->get('/', function (Application $app) {
