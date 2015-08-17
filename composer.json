@@ -7,7 +7,11 @@
         "symfony/security-csrf": "^2.7",
         "symfony/translation": "^2.7",
         "symfony/validator": "^2.7",
-        "symfony/config":"*"
+        "symfony/config":"*",
+        "doctrine/orm": "~2.4"
+    },
+    "config": {
+        "bin-dir": "bin/"
     },
     "autoload": {
         "psr-4" : {

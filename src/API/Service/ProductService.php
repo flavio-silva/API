@@ -20,8 +20,22 @@ class ProductService implements CrudServiceInterface
     
     public function save(array $data)
     {
+        if(array_key_exists('id', $data)) {
+            return $this->update($data);
+        }
+        
+        return $this->insert($data);
+    }
+
+    protected function insert(array $data)
+    {
         Hydrator::configure($this->product, $data);
-        return $this->dao->save($this->product);
+        return $this->dao->insert($this->product);
+    }
+    
+    protected function update(array $data)
+    {
+        return $this->dao->update($data);
     }
     
     public function findAll()

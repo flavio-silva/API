@@ -20,8 +20,8 @@ $app['product.entity'] = function () {
    return new \API\Entity\Product(); 
 };
 
-$app['product.dao'] = function (\Silex\Application $app) {
-   return new \API\Mapper\ProductDAO($app['pdo']); 
+$app['product.dao'] = function (\Silex\Application $app) use ($em) {
+   return new \API\Mapper\ProductDAO($em); 
 };
 
 $app['product.service'] = function (\Silex\Application $app) {
@@ -76,7 +76,10 @@ $product->get('edit/{id}', function (Application $app, $id) {
 })->bind('edit');
 
 $product->post('edit', function (Application $app, Request $request) {
-    $app['product.service']->save($request->get('form'));
+    
+    $data = $request->request->get('form');    
+    $app['product.service']->save($data);
+    
     return $app->redirect('/product');
 })->bind('save');
 

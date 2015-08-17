@@ -2,13 +2,44 @@
 
 namespace API\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="product")
+ */
+
 class Product implements ProductInterface
 {
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer", nullable=false)
+     * @ORM\GeneratedValue
+     * @var int
+     */
     private $id;
+    
+    /**
+     * @ORM\Column(type="string", length=100, nullable=false)
+     * @var string
+     */
     private $name;
+    
+    /**
+     * @ORM\Column(type="string", length=255, nullable=false)
+     * @var string 
+     */
     private $description;
+    /**
+     * @ORM\Column(type="decimal", nullable=false, precision=11, scale=2)
+     * @var string 
+     */
     private $value;
     
+    /**
+     * 
+     * @return array
+     */
     public function toArray()
     {
         return [

@@ -3,93 +3,51 @@
 namespace API\Mapper;
 
 use API\Entity\ProductInterface;
+use Doctrine\ORM\EntityManager;
 
 class ProductDAO implements ProductDAOInterface
 {
-    protected $pdo;
+    protected $em;
     
-    public function __construct(\PDO $pdo)
+    public function __construct(EntityManager $em)
     {
-        $this->pdo = $pdo;
+        $this->em = $em;
     }
     
-    protected function insert(ProductInterface $product)
+    public function insert(ProductInterface $product)
     {
-        $query = "INSERT INTO product (name, description, value) "
-                . "values (:name, :description, :value)";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindValue(':name', $product->getName(), \PDO::PARAM_STR);
-        $stmt->bindValue(':description', $product->getDescription(), \PDO::PARAM_STR);
-        $stmt->bindValue(':value', $product->getValue());
-        
-        if($stmt->execute()) {
-           
-           $product->setId($this->pdo->lastInsertId());
-           return $product; 
-        }
-        
-        throw new \UnexpectedValueException;
-    
+        $this->em->persist($product);
+        $this->em->flush();
     }
     
-    protected function update(ProductInterface $product)
+    public function update(array $data)
     {
-        $query = "UPDATE product SET name = :name, description = :description, value =:value "
-                . "WHERE id = :id";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindValue(':name', $product->getName(), \PDO::PARAM_STR);
-        $stmt->bindValue(':description', $product->getDescription(), \PDO::PARAM_STR);
-        $stmt->bindValue(':value', $product->getValue());
-        $stmt->bindValue(':id', $product->getId(),\PDO::PARAM_INT);
+        $entity = $this->em->getReference('API\Entity\Product', $data['id']);
         
-        if($stmt->execute()) {
-            return $product;
-        }
+        $entity->setName($data['name'])
+                ->setDescription($data['description'])
+                ->setValue($data['value']);
         
-        throw new \UnexpectedValueException;
-    
+        $this->em->persist($entity);
+        $this->em->flush();
     }
     
-    public function save(ProductInterface $product)
-    {
-        if(is_null($product->getId())) {
-            return $this->insert($product);
-        }
-        return $this->update($product);
-    }
-
     public function findAll()
     {
-        $query = 'SELECT * FROM product';
-        $stmt = $this->pdo->query($query);
-        
-        
-        $products = [];
-        
-        while($product = $stmt->fetchObject('API\Entity\Product'))
-        {
-            
-        	$products[$product->getId()] = $product;
-        }
-       
-        return $products;
-        
+        $repository = $this->em->getRepository('\API\Entity\Product');        
+        return $repository->findAll();
     }
 
     public function findById($id)
     {
-        $query = 'SELECT * FROM product WHERE id = :id';
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchObject('API\Entity\Product');
+        return $this->em->find('API\Entity\Product', $id);
     }
     
     public function delete($id) 
     {
-        $query = 'DELETE FROM product WHERE id = :id';
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
-        return $stmt->execute();
+        $product = $this->em->getReference('API\Entity\Product', $id);
+        $this->em->remove($product);
+        $this->em->flush();
+        return $product;
     }
 }
