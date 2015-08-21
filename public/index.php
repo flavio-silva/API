@@ -15,17 +15,8 @@ $app['pdo'] = function() {
    return new \PDO('mysql:host=localhost;dbname=api', 'root', 'root'); 
 };
 
-
-$app['product.entity'] = function () {
-   return new \API\Entity\Product(); 
-};
-
-$app['product.dao'] = function (\Silex\Application $app) use ($em) {
-   return new \API\Mapper\ProductDAO($em); 
-};
-
-$app['product.service'] = function (\Silex\Application $app) {
-    return new \API\Service\ProductService($app['product.entity'], $app['product.dao']);    
+$app['product.service'] = function (\Silex\Application $app) use ($em) {
+    return new \API\Service\ProductService($em);
 };
 
 $app['product.form'] = function (\Silex\Application $app) {
@@ -50,11 +41,35 @@ $app->get('/', function (Application $app){
 
 $product = $app['controllers_factory'];
 
-$product->get('/', function (\Silex\Application $app) {
+$product->get('/page/{page}', function (Application $app, Request $request, $page) {
+    
+    $search = $request->get('search');
+    $maxResults = 10;
+    $offset = ($page - 1) * $maxResults;
+    
+    if($search != null) {
+        $products = new \LimitIterator($app['product.service']->findByNameOrDescription($search), $offset, $maxResults);
+    } else {
+        $products = new \LimitIterator($app['product.service']->findAll(),$offset, $maxResults);
+    }
+    
+    $totalItems = count($products->getInnerIterator());
+    $totalPages = ceil($totalItems / $maxResults);
+    $firstPage = 1;
+    $lastPage = $totalPages;
+    
+    $prevPage = $page - 1 <= $firstPage ? $firstPage : $page - 1;
+    $nextPage = $page + 1 >= $lastPage ? $lastPage : $page + 1;
+    
     return $app['twig']->render('products.twig', [
-        'products' => $app['product.service']->findAll()
+        'products' => $products,
+        'search' => $search,
+        'page' => $page,        
+        'prev' => $prevPage,
+        'next' => $nextPage
     ]);
-})->bind('list');
+})->bind('list')
+->value('page', 1);
 
 $product->get('new', function (Application $app){
     return $app['twig']->render('create.twig', [
@@ -62,7 +77,7 @@ $product->get('new', function (Application $app){
     ]);
 })->bind('new');
 
-$product->get('edit/{id}', function (Application $app, $id) {
+$product->get('edit/{id}', function (Application $app, $id) {    
     $product = $app['product.service']->findBy($id);
     $form = $app['product.form'];
     $data = $product->toArray();
@@ -76,17 +91,16 @@ $product->get('edit/{id}', function (Application $app, $id) {
 })->bind('edit');
 
 $product->post('edit', function (Application $app, Request $request) {
-    
     $data = $request->request->get('form');    
     $app['product.service']->save($data);
     
-    return $app->redirect('/product');
+    return $app->redirect('page');
 })->bind('save');
 
 $product->get('delete/{id}', function (\Silex\Application $app, $id) {
     
     $app['product.service']->delete($id);
-    return $app->redirect('/product');
+    return $app->redirect('/product/page');
 })->bind('delete');
 
 

@@ -13,22 +13,37 @@
                 <th>Ação</th>
             </tr>
         </thead>
-        
-    {% for product in products %}
-        <tr>
-            <th scope="row">{{product.getId()}}</th>
-            <td>{{product.getName()}}</td>
-            <td>{{product.getDescription()}}</td>
-            <td>{{product.getValue()| number_format(2, ',', '.')}}</td>
-            <td>
-                <a data-toggle="tooltip" data-placement="top" title="" class="btn btn-default btn-sm" href="{{path('edit', {id: product.getId()})}}" data-original-title="Editar">
-                    <span style="color: blue" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                </a>
-                <a data-toggle="tooltip" data-placement="top" title="" class="btn btn-default btn-sm" href="{{path('delete', {id: product.getId()})}}" data-original-title="Editar">
-                    <span style="color: red" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                </a>
-            </td>
-        </tr>
-    {% endfor%}
+
+        {% for product in products %}
+            <tr>
+                <th scope="row">{{product.getId()}}</th>
+                <td>{{product.getName()}}</td>
+                <td>{{product.getDescription()}}</td>
+                <td>{{product.getValue()| number_format(2, ',', '.')}}</td>
+                <td>
+                    <a data-toggle="tooltip" data-placement="top" title="" class="btn btn-default btn-sm" href="{{path('edit', {id: product.getId()})}}" data-original-title="Editar">
+                        <span style="color: blue" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    </a>
+                    <a data-toggle="tooltip" data-placement="top" title="" class="btn btn-default btn-sm" href="{{path('delete', {id: product.getId()})}}" data-original-title="Editar">
+                        <span style="color: red" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </a>
+                </td>
+            </tr>
+        {% endfor%}
     </table>
+    <nav>
+        <ul class="pager">
+            {%if page == prev %}
+            <li><a class="btn disabled" href="{{path('list' , {search: search, page: prev})}}">Previous</a></li>
+            {%else%}
+            <li><a href="{{path('list' , {search: search, page: prev})}}">Previous</a></li>
+            {%endif%}
+            
+            {%if page == next %}
+            <li><a class="btn disabled" href="{{path('list' , {search: search, page: next})}}">Next</a></li>
+            {%else%}
+            <li><a href="{{path('list', {search: search, page: next})}}">Next</a></li>
+            {%endif%}
+        </ul>
+    </nav>
 {%endblock%}

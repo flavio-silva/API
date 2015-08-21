@@ -2,20 +2,17 @@
 
 namespace API\Service;
 
-use API\Mapper\ProductDAO;
 use API\Entity\Product as ProductEntity;
-use API\Hydrator;
+use Doctrine\ORM\EntityManager;
 
 class ProductService implements CrudServiceInterface
 {
     
-    protected $dao;
-    protected $product;
+    protected $em;
     
-    public function __construct(ProductEntity $product, ProductDAO $dao)
+    public function __construct(EntityManager $em)
     {
-        $this->dao = $dao;
-        $this->product = $product;
+        $this->em = $em;
     }
     
     public function save(array $data)
@@ -29,28 +26,54 @@ class ProductService implements CrudServiceInterface
 
     protected function insert(array $data)
     {
-        Hydrator::configure($this->product, $data);
-        return $this->dao->insert($this->product);
+        $product = new ProductEntity();
+        
+        $product->setName($data['name'])
+            ->setDescription($data['description'])
+            ->setValue($data['value']);
+        
+        $this->em->persist($product);
+        $this->em->flush();
+        
+        return $product;
     }
     
     protected function update(array $data)
     {
-        return $this->dao->update($data);
+        $product = $this->em->getReference('API\Entity\Product', $data['id']);
+        $product->setName($data['name'])
+            ->setDescription($data['description'])
+            ->setValue($data['value']);
+        
+        $this->em->persist($product);
+        $this->em->flush();
+        
+        return $product;
     }
-    
     public function findAll()
     {
-        return $this->dao->findAll();
+        $repo = $this->em->getRepository('API\Entity\Product');
+        return new \ArrayIterator($repo->findAll());
     }
     
     public function delete($id) 
     {
-        return $this->dao->delete($id);
+        $product = $this->em->getReference('API\Entity\Product', $id);        
+        $this->em->remove($product);
+        $this->em->flush();
+        return $product;
     }
 
     public function findBy($id) 
     {
-        return $this->dao->findById($id);
+        $repo = $this->em->getRepository('API\Entity\Product');
+        return $repo->find($id);
+    }
+    
+    public function findByNameOrDescription($search)
+    {
+        $repo = $this->em->getRepository('API\Entity\Product');
+        return new \ArrayIterator($repo->findByNameOrDescription($search));
     }
 
 }
