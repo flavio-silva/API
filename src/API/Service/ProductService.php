@@ -19,7 +19,7 @@ class ProductService implements CrudServiceInterface
     {
         if(array_key_exists('id', $data)) {
             return $this->update($data);
-        }
+        }        
         
         return $this->insert($data);
     }
@@ -30,7 +30,16 @@ class ProductService implements CrudServiceInterface
         
         $product->setName($data['name'])
             ->setDescription($data['description'])
-            ->setValue($data['value']);
+            ->setValue($data['value']);        
+        
+        if(!array_key_exists('category', $data)) {
+            throw new \BadMethodCallException('The key "category" was expected');
+        }
+        
+        
+        $category = $this->em->getReference('API\Entity\Category', $data['category']);
+        
+        $product->setCategory($category);
         
         $this->em->persist($product);
         $this->em->flush();
@@ -44,6 +53,14 @@ class ProductService implements CrudServiceInterface
         $product->setName($data['name'])
             ->setDescription($data['description'])
             ->setValue($data['value']);
+        
+        if(!array_key_exists('category', $data)) {
+            throw new \BadMethodCallException('The key "category" was expected');
+        }
+        
+        $category = $this->em->getReference('API\Entity\Category', $data['category']);
+        
+        $product->setCategory($category);
         
         $this->em->persist($product);
         $this->em->flush();

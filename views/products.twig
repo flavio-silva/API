@@ -9,7 +9,8 @@
                 <th>ID</th>
                 <th>Nome</th>
                 <th>Descrição</th>
-                <th>Value</th>
+                <th>Valor</th>
+                <th>Categoria</th>
                 <th>Ação</th>
             </tr>
         </thead>
@@ -20,6 +21,7 @@
                 <td>{{product.getName()}}</td>
                 <td>{{product.getDescription()}}</td>
                 <td>{{product.getValue()| number_format(2, ',', '.')}}</td>
+                <td>{{product.getCategory().getName()}}</td>
                 <td>
                     <a data-toggle="tooltip" data-placement="top" title="" class="btn btn-default btn-sm" href="{{path('edit', {id: product.getId()})}}" data-original-title="Editar">
                         <span style="color: blue" class="glyphicon glyphicon-edit" aria-hidden="true"></span>

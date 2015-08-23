@@ -3,7 +3,7 @@
 use Doctrine\ORM\EntityManager,
     Doctrine\Common\Annotations\AnnotationRegistry;
 
-require __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 $app = new \Silex\Application();
 $app->register(new \Silex\Provider\UrlGeneratorServiceProvider());
@@ -17,6 +17,7 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), [
 ]);
 
 $app->register(new Silex\Provider\ValidatorServiceProvider());
+$app->register(new \Silex\Provider\ServiceControllerServiceProvider());
 
 $app['debug'] = true;
 

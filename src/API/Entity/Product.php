@@ -8,9 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="API\Repository\Product")
  * @ORM\Table(name="product")
  */
-
 class Product implements ProductInterface
 {
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", nullable=false)
@@ -18,24 +18,31 @@ class Product implements ProductInterface
      * @var int
      */
     private $id;
-    
+
     /**
      * @ORM\Column(type="string", length=100, nullable=false)
      * @var string
      */
     private $name;
-    
+
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
      * @var string 
      */
     private $description;
+
     /**
      * @ORM\Column(type="decimal", nullable=false, precision=11, scale=2)
      * @var string 
      */
     private $value;
-    
+
+    /**
+     * @ORM\ManyToOne(targetEntity="API\Entity\Category")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     */
+    private $category;
+
     /**
      * 
      * @return array
@@ -46,10 +53,12 @@ class Product implements ProductInterface
             'id' => $this->getId(),
             'name' => $this->getName(),
             'description' => $this->getDescription(),
-            'value' => $this->getValue()
+            'value' => $this->getValue(),
+            'category' => $this->getCategory()
+                ->getId()
         ];
     }
-    
+
     public function getId()
     {
         return $this->id;
@@ -89,9 +98,21 @@ class Product implements ProductInterface
     }
 
     public function setValue($value)
-    {   
+    {
         $numberFormatter = new \NumberFormatter('pt_BR', \NumberFormatter::DECIMAL);
         $this->value = $numberFormatter->parse($value);
         return $this;
     }
+
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    public function setCategory($category)
+    {
+        $this->category = $category;
+        return $this;
+    }
+
 }
