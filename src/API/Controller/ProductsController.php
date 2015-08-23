@@ -20,7 +20,7 @@ class ProductsController extends AbstractController
         if ($search != null) {
             $products = new \LimitIterator($this->app[$this->service]->findByNameOrDescription($search), $offset, $maxResults);
         } else {
-            $products = new \LimitIterator($this->app[$this->service]->findAll(), $offset, $maxResults);
+            $products = new \LimitIterator(new \ArrayIterator($this->app[$this->service]->findAll()), $offset, $maxResults);
         }
 
         $totalItems = count($products->getInnerIterator());
@@ -51,7 +51,7 @@ class ProductsController extends AbstractController
     {
         $id = $this->request->get('id');
         
-        $product = $this->app[$this->service]->findBy($id);
+        $product = $this->app[$this->service]->findOneById($id);
         $form = $this->app[$this->form];
         $data = $product->toArray();
         $numberFormatter = new \NumberFormatter('pt_BR', \NumberFormatter::DECIMAL);

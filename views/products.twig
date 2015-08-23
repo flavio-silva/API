@@ -17,11 +17,11 @@
 
         {% for product in products %}
             <tr>
-                <th scope="row">{{product.getId()}}</th>
-                <td>{{product.getName()}}</td>
-                <td>{{product.getDescription()}}</td>
-                <td>{{product.getValue()| number_format(2, ',', '.')}}</td>
-                <td>{{product.getCategory().getName()}}</td>
+                <th scope="row">{{product.id}}</th>
+                <td>{{product.name}}</td>
+                <td>{{product.description}}</td>
+                <td>{{product.value | number_format(2, ',', '.')}}</td>
+                <td>{{product.category.name}}</td>
                 <td>
                     <a data-toggle="tooltip" data-placement="top" title="" class="btn btn-default btn-sm" href="{{path('edit', {id: product.getId()})}}" data-original-title="Editar">
                         <span style="color: blue" class="glyphicon glyphicon-edit" aria-hidden="true"></span>

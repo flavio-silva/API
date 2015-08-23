@@ -77,22 +77,28 @@ abstract class AbstractRestFulController implements RestFulInterface
     {
         $collection = $this->app[$this->service]->findAll();
         
-        $toArray = [];
-
-        foreach ($collection as $entity) {
-            $toArray[$entity->getId()] = $entity->toArray();
+        $data = [];
+        
+        foreach($collection as $entity) {
+            $data[] = $entity->toArray();
         }
-
-        return $this->app->json($toArray);
+        
+        return $this->app->json($data);
     }
     
     protected function getId($id)
     {
         $category = $this->app[$this->service]
-                ->findBy($id)
-                ->toArray();
-
-        return $this->app->json($category);
+                ->findOneById($id);
+                
+        if($category === null) {
+            return $this->app->json([
+                'message' => 'Valid ID was expected'
+            ]);
+        }
+        
+        
+        return $this->app->json($category->toArray());
     }
     
     public function post()

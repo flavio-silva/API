@@ -8,7 +8,7 @@ interface CrudServiceInterface
     
     function findAll();
     
-    function findBy($id);
+    function findOneById($id);
     
     function delete($id);
 }

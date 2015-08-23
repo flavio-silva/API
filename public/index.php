@@ -12,11 +12,11 @@ $app['pdo'] = function() {
 $app['em'] = $em;
 
 $app['product.service'] = function (\Silex\Application $app) {
-    return new \API\Service\ProductService($app['em']);
+    return new \API\Service\ProductService($app['em'], 'API\Entity\Product');
 };
 
 $app['category.service'] = function(Application $app){
-    return new \API\Service\CategoryService($app['em']);
+    return new \API\Service\CategoryService($app['em'], 'API\Entity\Category');
 };
 
 $app['category.constraint'] = new Assert\Collection([
