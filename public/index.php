@@ -19,6 +19,10 @@ $app['category.service'] = function(Application $app){
     return new \API\Service\CategoryService($app['em'], 'API\Entity\Category');
 };
 
+$app['tag.service'] = function(Application $app){
+    return new \API\Service\TagService($app['em'], 'API\Entity\Tag');
+};
+
 $app['category.constraint'] = new Assert\Collection([
             'name' => [new Assert\NotBlank(), new Assert\Length(['max' => 255])],
     ]);
@@ -27,6 +31,10 @@ $app['product.constraint'] = $constraint = new Assert\Collection([
             'description' => [new Assert\NotBlank(), new Assert\Length(['max' => 255])],
             'value' => [new Assert\NotBlank(), new Assert\Regex('/^[1-9]{1}[0-9]*,[0-9]{2}$/')],
             'category' => [new Assert\NotBlank(), new Assert\Regex('/^\d+$/')]
+    ]);
+
+$app['tag.constraint'] = new Assert\Collection([
+        'name' => [new Assert\NotBlank(), new Assert\Length(['max' => 255])]
     ]);
 
 $app['product.form'] = function (\Silex\Application $app) {

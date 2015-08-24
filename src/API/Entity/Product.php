@@ -3,6 +3,7 @@
 namespace API\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="API\Repository\Product")
@@ -42,7 +43,21 @@ class Product implements ProductInterface
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      */
     private $category;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="API\Entity\Tag")
+     * @ORM\JoinTable(name="product_tag", 
+    *       joinColumns={@ORM\JoinColumn(name="product_id", referencedColumnName="id")},
+    *       inverseJoinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="id")}
+     *      )
+     */
+    private $tags;
 
+    public function __construct()
+    {
+        $this->tags = new ArrayCollection();
+    }
+    
     /**
      * 
      * @return array
@@ -55,7 +70,8 @@ class Product implements ProductInterface
             'description' => $this->getDescription(),
             'value' => $this->getValue(),
             'category' => $this->getCategory()
-                ->getId()
+                ->getId(),
+            'tags' => $this->getTags()
         ];
     }
 
@@ -114,5 +130,16 @@ class Product implements ProductInterface
         $this->category = $category;
         return $this;
     }
+    
+    public function getTags()
+    {
+        return $this->tags;
+    }
 
+    public function addTags($tags)
+    {
+        $this->tags->add($tags);
+        return $this;
+    }
+    
 }
