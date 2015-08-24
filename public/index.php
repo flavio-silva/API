@@ -5,10 +5,6 @@ require __DIR__ . '/../bootstrap.php';
 use Silex\Application;
 use Symfony\Component\Validator\Constraints as Assert;
 
-$app['pdo'] = function() {
-   return new \PDO('mysql:host=localhost;dbname=api', 'root', 'root'); 
-};
-
 $app['em'] = $em;
 
 $app['product.service'] = function (\Silex\Application $app) {
