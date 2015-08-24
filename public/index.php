@@ -45,6 +45,12 @@ $app['product.form'] = function (\Silex\Application $app) {
         $categories[$category->getId()] = $category->getName();
     }
     
+    $tags = [];
+    
+    foreach($app['tag.service']->findAll() as $tag) {
+        $tags[$tag->getId()] = $tag->getName();
+    }
+    
     return $app['form.factory']
         ->createBuilder()
         ->add('id', 'hidden')
@@ -53,6 +59,10 @@ $app['product.form'] = function (\Silex\Application $app) {
         ->add('value', 'text', ['required' => true])
         ->add('category', 'choice', [
             'choices' => $categories
+        ])
+        ->add('tags', 'choice', [
+            'multiple' => true,
+            'choices' => $tags
         ])
         ->getForm();
 };

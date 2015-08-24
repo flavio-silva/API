@@ -64,15 +64,20 @@ class Product implements ProductInterface
      */
     public function toArray()
     {
-        return [
+        $data = [
             'id' => $this->getId(),
             'name' => $this->getName(),
             'description' => $this->getDescription(),
             'value' => $this->getValue(),
             'category' => $this->getCategory()
-                ->getId(),
-            'tags' => $this->getTags()
+                ->getId()            
         ];
+        
+        foreach($this->getTags() as $tag) {
+            $data['tags'][] = $tag->getId();
+        }
+        
+        return $data;
     }
 
     public function getId()

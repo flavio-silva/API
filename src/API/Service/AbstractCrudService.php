@@ -4,7 +4,6 @@ namespace API\Service;
 
 use Doctrine\ORM\EntityManager;
 use API\Hydrator;
-use Doctrine\ORM\AbstractQuery;
 
 class AbstractCrudService implements CrudServiceInterface
 {
