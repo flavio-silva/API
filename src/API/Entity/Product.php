@@ -4,9 +4,11 @@ namespace API\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use API\Service\UploadService;
 
 /**
  * @ORM\Entity(repositoryClass="API\Repository\Product")
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Table(name="product")
  */
 class Product
@@ -52,10 +54,23 @@ class Product
      *      )
      */
     private $tags;
+    
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @var string
+     */
+    private $image;
+
 
     public function __construct()
     {
         $this->tags = new ArrayCollection();
+    }
+    
+    /** @ORM\PrePersist */
+    public function doFileUpload()
+    {        
+        $this->image = UploadService::upload('image');
     }
     
     /**
