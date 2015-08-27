@@ -5,7 +5,7 @@ namespace API\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use API\Service\UploadService;
-
+use API\Service\RemoveFileService;
 /**
  * @ORM\Entity(repositoryClass="API\Repository\Product")
  * @ORM\HasLifecycleCallbacks
@@ -71,6 +71,13 @@ class Product
     public function doFileUpload()
     {        
         $this->image = UploadService::upload('image');
+    }
+    
+    /** @ORM\PreRemove */
+     
+    public function removeFile()
+    {        
+        RemoveFileService::removeFile($this->getImage());
     }
     
     /**
@@ -161,5 +168,18 @@ class Product
         $this->tags->add($tags);
         return $this;
     }
+    
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    public function setImage($image)
+    {
+        $this->image = $image;
+        return $this;
+    }
+
+
     
 }
